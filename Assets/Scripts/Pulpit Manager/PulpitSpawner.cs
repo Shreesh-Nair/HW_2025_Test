@@ -17,6 +17,9 @@ public class PulpitSpawner : MonoBehaviour
 
     public GameObject pulpitPrefab;
     public int maxActive = 2;
+    public int score = 0; // Doofus's score: number of pulpits walked on
+
+    public static PulpitSpawner Instance;
 
     Root data;
     List<GameObject> active = new List<GameObject>();
@@ -25,6 +28,8 @@ public class PulpitSpawner : MonoBehaviour
 
     void Start()
     {
+        Instance = this;
+
         string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
         if (File.Exists(path))
         {
@@ -39,6 +44,17 @@ public class PulpitSpawner : MonoBehaviour
             }
         }
         SpawnInitial();
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    public void AddScore()
+    {
+        score++;
+        Debug.LogFormat("Score: {0}", score);
     }
 
     void SpawnInitial()
