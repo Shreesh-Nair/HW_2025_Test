@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.IO;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Movement : MonoBehaviour
@@ -11,12 +12,37 @@ public class Movement : MonoBehaviour
     float inputZ;
     bool isFalling = false;
 
+    [System.Serializable]
+    class PlayerData { public float speed; }
+    [System.Serializable]
+    class Root { public PlayerData player_data; }
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // Attempt to read player speed from JSON diary
+        string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
+        if (File.Exists(path))
+        {
+            try
+            {
+                string json = File.ReadAllText(path);
+                Root r = JsonUtility.FromJson<Root>(json);
+                if (r != null && r.player_data != null)
+                {
+                    speed = r.player_data.speed;
+                    Debug.LogFormat("Movement: loaded speed {0} from JSON", speed);
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Movement: failed to read speed from JSON: " + ex.Message);
+            }
+        }
     }
 
     void Update()
@@ -41,7 +67,7 @@ public class Movement : MonoBehaviour
             return;
         }
 
-        Vector3 move = new Vector3(inputX, 0f, inputZ).normalized * 2 *speed;
+        Vector3 move = new Vector3(inputX, 0f, inputZ).normalized * 2 * speed;
         rb.velocity = new Vector3(move.x, rb.velocity.y, move.z);
     }
 }

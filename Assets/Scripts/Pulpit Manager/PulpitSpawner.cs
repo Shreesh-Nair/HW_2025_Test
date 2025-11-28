@@ -3,7 +3,7 @@ using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 
-public class SimplePulpitSpawner : MonoBehaviour
+public class PulpitSpawner : MonoBehaviour
 {
     [System.Serializable] class PlayerData { public float speed; }
     [System.Serializable]
@@ -25,11 +25,18 @@ public class SimplePulpitSpawner : MonoBehaviour
 
     void Start()
     {
-        string path = Path.Combine(Application.dataPath, "Scripts/JSON Files/doofus_diary.json");
+        string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
         if (File.Exists(path))
         {
-            string json = File.ReadAllText(path);
-            data = JsonUtility.FromJson<Root>(json);
+            try
+            {
+                string json = File.ReadAllText(path);
+                data = JsonUtility.FromJson<Root>(json);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError("Failed to read/parse doofus_diary.json: " + ex.Message);
+            }
         }
         SpawnInitial();
     }
@@ -48,17 +55,47 @@ public class SimplePulpitSpawner : MonoBehaviour
     IEnumerator SpawnWhenTimerReaches(GameObject pulpit, float life)
     {
         float spawnDelay = 0f;
+
         if (data != null && data.pulpit_data != null)
+        {
+            // Use the fixed pulpit_spawn_time from JSON: spawn when remaining life == pulpit_spawn_time
             spawnDelay = Mathf.Max(0f, life - data.pulpit_data.pulpit_spawn_time);
+        }
 
         yield return new WaitForSeconds(spawnDelay);
 
-        if (active.Count < maxActive)
-            TrySpawnAdjacent();
+        // Attempt to spawn adjacent to THIS pulpit. If maxActive is reached, wait until a slot frees up
+        // but only while this pulpit still exists in the `active` list. If it gets destroyed first, abort.
+        while (active.Count >= maxActive)
+        {
+            if (pulpit == null || !active.Contains(pulpit))
+                yield break; // pulpit destroyed or no longer active, don't spawn
+
+            yield return null; // wait a frame and check again
+        }
+
+        // If we reach here, there's room to spawn and the pulpit is still active
+        TrySpawnAdjacent(pulpit);
     }
 
-    void TrySpawnAdjacent()
+    void TrySpawnAdjacent(GameObject anchorPulpit = null)
     {
+        if (active.Count >= maxActive) return;
+
+        Vector3 anchor;
+        if (anchorPulpit != null && active.Contains(anchorPulpit))
+        {
+            anchor = anchorPulpit.transform.position;
+        }
+        else if (active.Count > 0)
+        {
+            anchor = active[active.Count - 1].transform.position;
+        }
+        else
+        {
+            anchor = lastPos;
+        }
+
         Vector3 spawnPos = Vector3.zero;
         bool found = false;
         int attempts = 0;
@@ -67,7 +104,7 @@ public class SimplePulpitSpawner : MonoBehaviour
         {
             attempts++;
             Vector3 offset = dirs[Random.Range(0, dirs.Length)];
-            Vector3 candidate = lastPos + offset;
+            Vector3 candidate = anchor + offset;
 
             bool occupied = false;
             foreach (var a in active)
@@ -79,7 +116,6 @@ public class SimplePulpitSpawner : MonoBehaviour
             {
                 spawnPos = candidate;
                 found = true;
-                lastPos = candidate;
             }
         }
 
@@ -88,17 +124,30 @@ public class SimplePulpitSpawner : MonoBehaviour
             GameObject p = Instantiate(pulpitPrefab, spawnPos, Quaternion.identity);
             p.transform.localScale = new Vector3(9f, 1f, 9f);
             active.Add(p);
+            lastPos = p.transform.position;
             float life = GetRandomLife();
             StartCoroutine(DestroyAfter(p, life));
             StartCoroutine(SpawnWhenTimerReaches(p, life));
+            Debug.LogFormat("Spawned pulpit at {0} (life {1:0.00}). Active: {2}", spawnPos, life, active.Count);
         }
     }
 
     IEnumerator DestroyAfter(GameObject g, float t)
     {
         yield return new WaitForSeconds(t);
+
         if (active.Contains(g)) active.Remove(g);
         if (g != null) Destroy(g);
+
+        Debug.LogFormat("Destroyed pulpit. Active now: {0}", active.Count);
+
+        if (active.Count > 0)
+        {
+            lastPos = active[active.Count - 1].transform.position;
+        }
+
+        // Do NOT spawn a replacement immediately on destruction.
+        // New pulpits are spawned only when an existing pulpit's timer reaches `pulpit_spawn_time`.
     }
 
     float GetRandomLife()
