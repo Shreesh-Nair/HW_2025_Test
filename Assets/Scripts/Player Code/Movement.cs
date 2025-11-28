@@ -53,7 +53,7 @@ public class Movement : MonoBehaviour
             inputZ = Input.GetAxisRaw("Vertical");
         }
 
-        if (transform.position.y < 1f && !isFalling)
+        if (transform.position.y < 0.9f && !isFalling)
         {
             isFalling = true;
         }
@@ -63,11 +63,11 @@ public class Movement : MonoBehaviour
     {
         if (isFalling)
         {
-            rb.velocity = new Vector3(0f, fallSpeed, 0f);
+            rb.linearVelocity = new Vector3(0f, fallSpeed, 0f);
             return;
         }
 
         Vector3 move = new Vector3(inputX, 0f, inputZ).normalized * 2 * speed;
-        rb.velocity = new Vector3(move.x, rb.velocity.y, move.z);
+        rb.linearVelocity = new Vector3(move.x, rb.linearVelocity.y, move.z);
     }
 }
