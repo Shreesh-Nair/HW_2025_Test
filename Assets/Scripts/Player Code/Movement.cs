@@ -32,7 +32,7 @@ public class Movement : MonoBehaviour
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
         Vector3 input = new Vector3(x, 0f, z);
-        Vector3 horizontalVelocity = input.normalized * speed;
+        Vector3 horizontalVelocity = input.normalized * 2* speed;
         rb.linearVelocity = new Vector3(horizontalVelocity.x, rb.linearVelocity.y, horizontalVelocity.z);
     }
 }
