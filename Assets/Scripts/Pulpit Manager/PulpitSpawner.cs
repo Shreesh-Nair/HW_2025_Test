@@ -5,10 +5,7 @@ using System.Collections;
 public class SimplePulpitSpawner : MonoBehaviour
 {
     [System.Serializable]
-    class PlayerData
-    {
-        public float speed;
-    }
+    class PlayerData { public float speed; }
 
     [System.Serializable]
     class PulpitData
@@ -37,18 +34,21 @@ public class SimplePulpitSpawner : MonoBehaviour
         GameObject p = Instantiate(pulpitPrefab, Vector3.zero, Quaternion.identity);
         p.transform.localScale = new Vector3(9f, 1f, 9f);
 
-        StartCoroutine(PrintRandomDelay());
+        StartCoroutine(RandomTimeLoop());
     }
 
-    IEnumerator PrintRandomDelay()
+    IEnumerator RandomTimeLoop()
     {
-        float t = Random.Range(
-            data.pulpit_data.min_pulpit_destroy_time,
-            data.pulpit_data.max_pulpit_destroy_time
-        );
+        while (true)
+        {
+            float t = Random.Range(
+                data.pulpit_data.min_pulpit_destroy_time,
+                data.pulpit_data.max_pulpit_destroy_time
+            );
 
-        yield return new WaitForSeconds(t);
+            yield return new WaitForSeconds(t);
 
-        Debug.Log("Random Time: " + t);
+            Debug.Log("Random Time: " + t);
+        }
     }
 }

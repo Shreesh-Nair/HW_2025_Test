@@ -1,38 +1,38 @@
 using UnityEngine;
-using System.IO;
-
-[System.Serializable]
-public class PlayerData { public float speed; }
-
-[System.Serializable]
-public class RootData { public PlayerData player_data; }
 
 [RequireComponent(typeof(Rigidbody))]
 public class Movement : MonoBehaviour
 {
-    RootData data;
-    float speed = 3f;
+    public float speed = 3f;
+    public float fallForce = 50f;
+
     Rigidbody rb;
+    float inputX;
+    float inputZ;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         rb.constraints = RigidbodyConstraints.FreezeRotation;
-        string path = Path.Combine(Application.dataPath, "Scripts/JSON Files/doofus_diary.json");
-        if (File.Exists(path))
-        {
-            string json = File.ReadAllText(path);
-            data = JsonUtility.FromJson<RootData>(json);
-            if (data != null && data.player_data != null) speed = data.player_data.speed;
-        }
+        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
     }
 
     void Update()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-        Vector3 input = new Vector3(x, 0f, z);
-        Vector3 horizontalVelocity = input.normalized * 2* speed;
-        rb.linearVelocity = new Vector3(horizontalVelocity.x, rb.linearVelocity.y, horizontalVelocity.z);
+        inputX = Input.GetAxisRaw("Horizontal");
+        inputZ = Input.GetAxisRaw("Vertical");
+    }
+
+    void FixedUpdate()
+    {
+        Vector3 horizontal = new Vector3(inputX, 0f, inputZ).normalized * speed;
+        Vector3 newVel = new Vector3(horizontal.x, rb.velocity.y, horizontal.z);
+        rb.velocity = newVel;
+
+        if (transform.position.y < 1f)
+        {
+            rb.AddForce(Vector3.down * fallForce, ForceMode.Acceleration);
+        }
     }
 }
