@@ -4,11 +4,12 @@ using UnityEngine;
 public class Movement : MonoBehaviour
 {
     public float speed = 3f;
-    public float fallForce = 50f;
+    public float fallSpeed = -12f;
 
     Rigidbody rb;
     float inputX;
     float inputZ;
+    bool isFalling = false;
 
     void Start()
     {
@@ -20,19 +21,27 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
-        inputX = Input.GetAxisRaw("Horizontal");
-        inputZ = Input.GetAxisRaw("Vertical");
+        if (!isFalling)
+        {
+            inputX = Input.GetAxisRaw("Horizontal");
+            inputZ = Input.GetAxisRaw("Vertical");
+        }
+
+        if (transform.position.y < 1f && !isFalling)
+        {
+            isFalling = true;
+        }
     }
 
     void FixedUpdate()
     {
-        Vector3 horizontal = new Vector3(inputX, 0f, inputZ).normalized * speed;
-        Vector3 newVel = new Vector3(horizontal.x, rb.velocity.y, horizontal.z);
-        rb.velocity = newVel;
-
-        if (transform.position.y < 1f)
+        if (isFalling)
         {
-            rb.AddForce(Vector3.down * fallForce, ForceMode.Acceleration);
+            rb.velocity = new Vector3(0f, fallSpeed, 0f);
+            return;
         }
+
+        Vector3 move = new Vector3(inputX, 0f, inputZ).normalized * 2 *speed;
+        rb.velocity = new Vector3(move.x, rb.velocity.y, move.z);
     }
 }
