@@ -1,3 +1,6 @@
+https://github.com/user-attachments/assets/fdf93a8c-d76a-4f79-882b-bc82f5fa1c25
+
+
 Doofus Adventure Game
 
 Submission by Shreesh R Nair — 22BAI1120
@@ -61,7 +64,3 @@ How to Play
 -Open the Final Game folder
 
 -Run HW_2025_Test.exe
-
-
-Gameplay Video
-https://github.com/user-attachments/assets/fdf93a8c-d76a-4f79-882b-bc82f5fa1c25
