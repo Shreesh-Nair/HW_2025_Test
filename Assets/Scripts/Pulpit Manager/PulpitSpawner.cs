@@ -26,9 +26,25 @@ public class PulpitSpawner : MonoBehaviour
     Vector3 lastPos = Vector3.zero;
     Vector3[] dirs = new Vector3[] { new Vector3(9f,0f,0f), new Vector3(-9f,0f,0f), new Vector3(0f,0f,9f), new Vector3(0f,0f,-9f) };
 
+    // ===== singleton in Awake to avoid double Start/Spawn calls =====
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Debug.LogWarning("PulpitSpawner: Duplicate instance found, destroying duplicate on " + gameObject.name);
+            Destroy(gameObject);
+            return;
+        }
+    }
+
     void Start()
     {
-        Instance = this;
+        // Only the singleton should do initialization / spawning
+        if (Instance != this) return;
 
         string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
         if (File.Exists(path))
@@ -59,6 +75,9 @@ public class PulpitSpawner : MonoBehaviour
 
     void SpawnInitial()
     {
+        // defensive: if another spawn already happened, don't spawn again
+        if (active.Count > 0) return;
+
         GameObject p = Instantiate(pulpitPrefab, Vector3.zero, Quaternion.identity);
         p.transform.localScale = new Vector3(9f, 1f, 9f);
         active.Add(p);
