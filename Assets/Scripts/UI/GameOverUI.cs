@@ -3,8 +3,8 @@ using UnityEngine.UI;
 
 public class GameOverUI : MonoBehaviour
 {
-    public Text finalScoreText; // assign in inspector
-    public Text bestScoreText;  // assign in inspector
+    public Text finalScoreText; 
+    public Text bestScoreText;  
 
     void Start()
     {

@@ -24,7 +24,6 @@ public class Movement : MonoBehaviour
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
 
-        // Attempt to read player speed from JSON diary
         string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
         if (File.Exists(path))
         {

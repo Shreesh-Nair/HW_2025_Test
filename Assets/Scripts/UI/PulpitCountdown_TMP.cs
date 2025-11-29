@@ -4,8 +4,8 @@ using System.Collections;
 
 public class PulpitCountdown_TMP : MonoBehaviour
 {
-    public TextMeshProUGUI countdownText; // assign in prefab inspector
-    public bool faceCamera = false;       // keep false to keep text fixed
+    public TextMeshProUGUI countdownText; 
+    public bool faceCamera = false;       
     float life = 5f;
 
     void Start()
