@@ -1,60 +1,67 @@
-##Doofus Adventure Game
-Submission by Shreesh R Nair 22BAI1120
+Doofus Adventure Game
 
-#Overview
+Submission by Shreesh R Nair — 22BAI1120
+
+Overview
 
 Doofus Adventure is a simple skill-based platformer where the player controls a small cube (“Doofus”) and tries to move across disappearing pulpits (platforms).
-The goal is to survive as long as possible and score points by successfully reaching new pulpits before they vanish.
+The goal is to survive as long as possible and score points by reaching new pulpits before they vanish.
+Each pulpit has a limited lifetime and disappears after its countdown reaches zero.
 
-The game becomes challenging because each pulpit has a limited lifetime and disappears after a countdown.
+Gameplay
 
-#Gameplay
--The player starts on a pulpit at the center of the map.
+The player starts on a pulpit at the center of the map.
 
--Adjacent pulpits spawn based on timing rules and disappear after a few seconds.
+Adjacent pulpits spawn based on timing rules and disappear after a few seconds.
 
--Each pulpit shows a countdown timer on its surface so the player knows how long it will stay.
+Each pulpit shows a countdown timer so the player can judge when it will vanish.
 
--When the player moves onto a new pulpit, the score increases by 1.
+Reaching a new pulpit increases the score by +1.
 
--If the player falls off the platforms, the game ends and moves to the Game Over screen.
+Falling off results in a Game Over screen.
 
+Controls
 
-#Controls
--W A S D – Move the cube in four directions
+W A S D — Move the cube
 
--Movement is simple and physics-based
+Simple, physics-based movement
 
-#Start Menu
--Start Game
+Start Menu
 
--Quit Game
+Start Game
 
+Quit Game
 
-#Game Screen
--Live score shown at the top
+Game Screen Features
 
--Countdown displayed on each pulpit
+Live score displayed at the top
 
--Smooth camera follow
+Countdown timer on each pulpit
 
--Simple spawn and destruction animations for pulpits
+Smooth camera follow
 
+Simple spawn & destruction animations for pulpits
 
-#Game Over Screen
--Shows Final Score and Best Score
+Game Over Screen
 
--Retry
+Shows Final Score
 
--Quit game
+Shows Best Score
 
--Quit to Start Menu
+Retry option
 
+Quit to Start Menu
 
-#How to play
--Clone the repo
+Quit Game
 
--Open Final Game folder
+How to Play
 
--Run the HW_2025_Test.exe
+Clone the repository
 
+Open the Final Game folder
+
+Run HW_2025_Test.exe
+
+Gameplay Video
+
+https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4
