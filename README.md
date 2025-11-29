@@ -10,65 +10,57 @@ Each pulpit has a limited lifetime and disappears after its countdown reaches ze
 
 Gameplay
 
-The player starts on a pulpit at the center of the map.
+-The player starts on a pulpit at the center of the map.
 
-Adjacent pulpits spawn based on timing rules and disappear after a few seconds.
+-Adjacent pulpits spawn based on timing rules and disappear after a few seconds.
 
-Each pulpit shows a countdown timer so the player can judge when it will vanish.
+-Each pulpit shows a countdown timer so the player can judge when it will vanish.
 
-Reaching a new pulpit increases the score by +1.
+-Reaching a new pulpit increases the score by +1.
 
-Falling off results in a Game Over screen.
+-Falling off results in a Game Over screen.
 
 Controls
 
-W A S D — Move the cube
+-W A S D — Move the cube
 
-Simple, physics-based movement
+-Simple, physics-based movement
 
 Start Menu
 
-Start Game
+-Start Game
 
-Quit Game
+-Quit Game
 
 Game Screen Features
 
-Live score displayed at the top
+-Live score displayed at the top
 
-Countdown timer on each pulpit
+-Countdown timer on each pulpit
 
-Smooth camera follow
+-Smooth camera follow
 
-Simple spawn & destruction animations for pulpits
+-Simple spawn & destruction animations for pulpits
 
 Game Over Screen
 
-Shows Final Score
+-Shows Final Score
 
-Shows Best Score
+-Shows Best Score
 
-Retry option
+-Retry option
 
-Quit to Start Menu
+-Quit to Start Menu
 
-Quit Game
+-Quit Game
 
 How to Play
 
-Clone the repository
+-Clone the repository
 
-Open the Final Game folder
+-Open the Final Game folder
 
-Run HW_2025_Test.exe
+-Run HW_2025_Test.exe
 
 
-<h2 align="center">Gameplay Video</h2>
-
-<p align="center">
-  <video src="https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4?raw=1" 
-         controls 
-         width="600">
-  </video>
-</p>
-
+Gameplay Video
