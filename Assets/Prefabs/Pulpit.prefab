@@ -116,6 +116,7 @@ GameObject:
   - component: {fileID: 5506236822986177174}
   - component: {fileID: 9153253275100600239}
   - component: {fileID: 4552777791864653415}
+  - component: {fileID: -706732147917618610}
   m_Layer: 3
   m_Name: Pulpit
   m_TagString: Untagged
@@ -242,6 +243,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PulpitCountdown_TMP
   countdownText: {fileID: 2323608965262056920}
   faceCamera: 1
+--- !u!114 &-706732147917618610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6131796680791332233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39fccac94224b374fb488eebc1b53921, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PulpitFX
+  spawnDuration: 0.15
+  destroyDuration: 0.15
 --- !u!1 &8576113881768989303
 GameObject:
   m_ObjectHideFlags: 0

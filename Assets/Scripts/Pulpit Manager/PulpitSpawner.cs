@@ -69,6 +69,10 @@ public class PulpitSpawner : MonoBehaviour
         var pcInit = p.GetComponent<PulpitCountdown_TMP>();
         if (pcInit != null) pcInit.Init(life);
 
+        // play spawn FX if present
+        var fxInit = p.GetComponent<PulpitFX>();
+        if (fxInit != null) fxInit.PlaySpawnEffect();
+
         StartCoroutine(DestroyAfter(p, life));
         StartCoroutine(SpawnWhenTimerReaches(p, life));
     }
@@ -151,6 +155,10 @@ public class PulpitSpawner : MonoBehaviour
             var pcInit = p.GetComponent<PulpitCountdown_TMP>();
             if (pcInit != null) pcInit.Init(life);
 
+            // play spawn FX if present
+            var fxInit = p.GetComponent<PulpitFX>();
+            if (fxInit != null) fxInit.PlaySpawnEffect();
+
             StartCoroutine(DestroyAfter(p, life));
             StartCoroutine(SpawnWhenTimerReaches(p, life));
             Debug.LogFormat("Spawned pulpit at {0} (life {1:0.00}). Active: {2}", spawnPos, life, active.Count);
@@ -162,7 +170,16 @@ public class PulpitSpawner : MonoBehaviour
         yield return new WaitForSeconds(t);
 
         if (active.Contains(g)) active.Remove(g);
-        if (g != null) Destroy(g);
+
+        if (g != null)
+        {
+            // play destroy FX if present and wait for it
+            var fx = g.GetComponent<PulpitFX>();
+            if (fx != null)
+                yield return fx.PlayDestroyEffect();
+
+            Destroy(g);
+        }
 
         Debug.LogFormat("Destroyed pulpit. Active now: {0}", active.Count);
 
