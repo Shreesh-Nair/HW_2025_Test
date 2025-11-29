@@ -74,23 +74,22 @@ public class PulpitSpawner : MonoBehaviour
 
         if (data != null && data.pulpit_data != null)
         {
-            // Use the fixed pulpit_spawn_time from JSON: spawn when remaining life == pulpit_spawn_time
+            //use the fixed pulpit_spawn_time from JSON spawn when remaining life == pulpit_spawn_time
             spawnDelay = Mathf.Max(0f, life - data.pulpit_data.pulpit_spawn_time);
         }
 
         yield return new WaitForSeconds(spawnDelay);
 
-        // Attempt to spawn adjacent to THIS pulpit. If maxActive is reached, wait until a slot frees up
-        // but only while this pulpit still exists in the `active` list. If it gets destroyed first, abort.
+        //attempt to spawn adjacent to this pulpit if maxActive is reached, wait until a slot frees up but only while this pulpit still exists in the active list if it gets destroyed first, abort
         while (active.Count >= maxActive)
         {
             if (pulpit == null || !active.Contains(pulpit))
-                yield break; // pulpit destroyed or no longer active, don't spawn
+                yield break; //pulpit destroyed or no longer active dont spawn
 
-            yield return null; // wait a frame and check again
+            yield return null;//wait a frame and check again
         }
 
-        // If we reach here, there's room to spawn and the pulpit is still active
+        //if we reach here theres room to spawn and the pulpit is still active
         TrySpawnAdjacent(pulpit);
     }
 
@@ -162,8 +161,8 @@ public class PulpitSpawner : MonoBehaviour
             lastPos = active[active.Count - 1].transform.position;
         }
 
-        // Do NOT spawn a replacement immediately on destruction.
-        // New pulpits are spawned only when an existing pulpit's timer reaches `pulpit_spawn_time`.
+        //no spawn a replacement immediately on destruction
+        //pulpits are spawned only when an existing pulpit's timer reaches `pulpit_spawn_time`
     }
 
     float GetRandomLife()

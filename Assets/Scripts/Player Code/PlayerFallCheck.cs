@@ -1,16 +1,15 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerFallCheck : MonoBehaviour
 {
+    public string gameOverSceneName = "GameOver"; 
+
     void Update()
     {
         if (transform.position.y <= -1.5f)
         {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
+            SceneManager.LoadScene(gameOverSceneName);
         }
     }
 }
