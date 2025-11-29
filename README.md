@@ -64,4 +64,4 @@ Run HW_2025_Test.exe
 
 Gameplay Video
 
-https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4
+https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4?raw=1
