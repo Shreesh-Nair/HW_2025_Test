@@ -64,6 +64,11 @@ public class PulpitSpawner : MonoBehaviour
         active.Add(p);
         lastPos = p.transform.position;
         float life = GetRandomLife();
+
+        // initialize pulpit countdown (new part) — does not change spawn/destroy logic
+        var pcInit = p.GetComponent<PulpitCountdown_TMP>();
+        if (pcInit != null) pcInit.Init(life);
+
         StartCoroutine(DestroyAfter(p, life));
         StartCoroutine(SpawnWhenTimerReaches(p, life));
     }
@@ -141,6 +146,11 @@ public class PulpitSpawner : MonoBehaviour
             active.Add(p);
             lastPos = p.transform.position;
             float life = GetRandomLife();
+
+            // initialize pulpit countdown (new part) — keep behavior identical otherwise
+            var pcInit = p.GetComponent<PulpitCountdown_TMP>();
+            if (pcInit != null) pcInit.Init(life);
+
             StartCoroutine(DestroyAfter(p, life));
             StartCoroutine(SpawnWhenTimerReaches(p, life));
             Debug.LogFormat("Spawned pulpit at {0} (life {1:0.00}). Active: {2}", spawnPos, life, active.Count);
