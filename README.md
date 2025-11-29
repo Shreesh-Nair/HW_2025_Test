@@ -62,6 +62,13 @@ Open the Final Game folder
 
 Run HW_2025_Test.exe
 
-Gameplay Video
 
-https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4?raw=1
+<h2 align="center">Gameplay Video</h2>
+
+<p align="center">
+  <video src="https://github.com/Shreesh-Nair/HW_2025_Test/raw/refs/heads/main/GameplayVids/GameplayVideo.mp4?raw=1" 
+         controls 
+         width="600">
+  </video>
+</p>
+
