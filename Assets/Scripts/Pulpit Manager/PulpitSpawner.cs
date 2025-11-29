@@ -20,15 +20,20 @@ public class PulpitSpawner : MonoBehaviour
     public int score = 0; // Doofus's score: number of pulpits walked on
 
     public static PulpitSpawner Instance;
+    bool initialSpawned = false;
 
     Root data;
     List<GameObject> active = new List<GameObject>();
     Vector3 lastPos = Vector3.zero;
+    static int pulpitGlobalId = 0; // diagnostic: unique id for each pulpit instance
     Vector3[] dirs = new Vector3[] { new Vector3(9f,0f,0f), new Vector3(-9f,0f,0f), new Vector3(0f,0f,9f), new Vector3(0f,0f,-9f) };
 
     // ===== singleton in Awake to avoid double Start/Spawn calls =====
     void Awake()
     {
+        var all = FindObjectsOfType<PulpitSpawner>();
+        Debug.LogFormat("PulpitSpawner Awake: found {0} spawner(s) in scene. This object: {1} (InstanceHash {2})", all.Length, gameObject.name, GetHashCode());
+
         if (Instance == null)
         {
             Instance = this;
@@ -47,17 +52,72 @@ public class PulpitSpawner : MonoBehaviour
         if (Instance != this) return;
 
         string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
+        bool loaded = false;
         if (File.Exists(path))
         {
             try
             {
                 string json = File.ReadAllText(path);
                 data = JsonUtility.FromJson<Root>(json);
+                loaded = data != null;
+                Debug.LogFormat("Loaded doofus_diary.json from Assets path: {0}", path);
             }
             catch (System.Exception ex)
             {
-                Debug.LogError("Failed to read/parse doofus_diary.json: " + ex.Message);
+                Debug.LogWarning("Failed to read/parse doofus_diary.json from Assets path: " + ex.Message);
             }
+        }
+
+        // Fallback: check StreamingAssets (included in builds)
+        if (!loaded)
+        {
+            string sPath = Path.Combine(Application.streamingAssetsPath, "doofus_diary.json");
+            if (File.Exists(sPath))
+            {
+                try
+                {
+                    string json = File.ReadAllText(sPath);
+                    data = JsonUtility.FromJson<Root>(json);
+                    loaded = data != null;
+                    Debug.LogFormat("Loaded doofus_diary.json from StreamingAssets: {0}", sPath);
+                }
+                catch (System.Exception ex)
+                {
+                    Debug.LogWarning("Failed to read/parse doofus_diary.json from StreamingAssets: " + ex.Message);
+                }
+            }
+        }
+
+        // Final fallback: Resources (requires placing file as a TextAsset at Resources/doofus_diary.json)
+        if (!loaded)
+        {
+            try
+            {
+                var ta = Resources.Load<TextAsset>("doofus_diary");
+                if (ta != null)
+                {
+                    data = JsonUtility.FromJson<Root>(ta.text);
+                    loaded = data != null;
+                    Debug.Log("Loaded doofus_diary.json from Resources/doofus_diary");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Failed to read/parse doofus_diary.json from Resources: " + ex.Message);
+            }
+        }
+
+        if (!loaded)
+        {
+            // Provide safe defaults so builds behave like the editor when JSON is missing
+            data = new Root();
+            data.player_data = new PlayerData();
+            data.player_data.speed = 3f;
+            data.pulpit_data = new PulpitData();
+            data.pulpit_data.min_pulpit_destroy_time = 4f;
+            data.pulpit_data.max_pulpit_destroy_time = 5f;
+            data.pulpit_data.pulpit_spawn_time = 2.5f;
+            Debug.LogWarning("doofus_diary.json not found; using built-in defaults (speed=3, min=4,max=5,spawn=2.5)");
         }
         SpawnInitial();
     }
@@ -75,10 +135,26 @@ public class PulpitSpawner : MonoBehaviour
 
     void SpawnInitial()
     {
-        // defensive: if another spawn already happened, don't spawn again
+        // defensive: prevent multiple initial spawns across instances/builds
+        if (initialSpawned) return;
+        // also ensure this instance hasn't already spawned
         if (active.Count > 0) return;
 
+        // mark early to avoid race where two spawners both pass the checks and instantiate on same frame
+        initialSpawned = true;
+
         GameObject p = Instantiate(pulpitPrefab, Vector3.zero, Quaternion.identity);
+            // diagnostic: give each pulpit a unique name so build logs can be traced
+            int id = ++pulpitGlobalId;
+            p.name = string.Format("Pulpit_{0}", id);
+            Debug.LogFormat("SpawnInitial: instantiated pulpit {0} by spawner {1} (initialSpawned={2})", p.name, GetHashCode(), initialSpawned);
+        // defensive: if the pulpit prefab mistakenly contains a PulpitSpawner, remove it from the instance
+        var stray = p.GetComponent<PulpitSpawner>();
+        if (stray != null)
+        {
+            Debug.LogWarning("Removed stray PulpitSpawner component from instantiated pulpit prefab.");
+            Destroy(stray);
+        }
         p.transform.localScale = new Vector3(9f, 1f, 9f);
         active.Add(p);
         lastPos = p.transform.position;
@@ -165,6 +241,16 @@ public class PulpitSpawner : MonoBehaviour
         if (found)
         {
             GameObject p = Instantiate(pulpitPrefab, spawnPos, Quaternion.identity);
+                        int id = ++pulpitGlobalId;
+                        p.name = string.Format("Pulpit_{0}", id);
+                        Debug.LogFormat("TrySpawnAdjacent: instantiated pulpit {0} at {1} by spawner {2}", p.name, spawnPos, GetHashCode());
+            // defensive: remove stray PulpitSpawner from the instantiated pulpit prefab if present
+            var stray = p.GetComponent<PulpitSpawner>();
+            if (stray != null)
+            {
+                Debug.LogWarning("Removed stray PulpitSpawner component from instantiated pulpit prefab.");
+                Destroy(stray);
+            }
             p.transform.localScale = new Vector3(9f, 1f, 9f);
             active.Add(p);
             lastPos = p.transform.position;
