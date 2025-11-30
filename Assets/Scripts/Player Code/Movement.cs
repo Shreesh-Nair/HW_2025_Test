@@ -6,11 +6,14 @@ public class Movement : MonoBehaviour
 {
     public float speed = 3f;
     public float fallSpeed = -12f;
+    public float groundCheckDistance = 0.6f;
+    public LayerMask groundLayers = ~0;
 
     Rigidbody rb;
     float inputX;
     float inputZ;
     bool isFalling = false;
+    bool isGrounded = false;
 
     [System.Serializable]
     class PlayerData { public float speed; }
@@ -23,6 +26,20 @@ public class Movement : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeRotation;
         rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
         rb.interpolation = RigidbodyInterpolation.Interpolate;
+
+        // Reduce sticking to walls by assigning a zero-friction PhysicMaterial at runtime
+        // Always replace the player's material to ensure consistent friction behavior
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+        {
+            var mat = new PhysicsMaterial("Player_NoFriction");
+            mat.dynamicFriction = 0f;
+            mat.staticFriction = 0f;
+            mat.frictionCombine = PhysicsMaterialCombine.Minimum;
+            mat.bounciness = 0f;
+            mat.bounceCombine = PhysicsMaterialCombine.Minimum;
+            col.material = mat;
+        }
 
         bool loaded = false;
         string path = Path.Combine(Application.dataPath, "Scripts", "JSON Files", "doofus_diary.json");
@@ -100,15 +117,24 @@ public class Movement : MonoBehaviour
 
     void Update()
     {
+        // Ground check using a short downward raycast
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, groundCheckDistance, groundLayers, QueryTriggerInteraction.Ignore))
+            isGrounded = true;
+        else
+            isGrounded = false;
+
+        // Determine falling state from vertical velocity and grounded state
+        if (!isGrounded && rb.linearVelocity.y < -0.1f)
+            isFalling = true;
+        else if (isGrounded)
+            isFalling = false;
+
+        // Only read horizontal input when not falling
         if (!isFalling)
         {
             inputX = Input.GetAxisRaw("Horizontal");
             inputZ = Input.GetAxisRaw("Vertical");
-        }
-
-        if (transform.position.y < 0.9f && !isFalling)
-        {
-            isFalling = true;
         }
     }
 
@@ -116,6 +142,7 @@ public class Movement : MonoBehaviour
     {
         if (isFalling)
         {
+            // enforce free-fall: no horizontal motion while falling
             rb.linearVelocity = new Vector3(0f, fallSpeed, 0f);
             return;
         }

@@ -156,6 +156,18 @@ public class PulpitSpawner : MonoBehaviour
             Destroy(stray);
         }
         p.transform.localScale = new Vector3(9f, 1f, 9f);
+        // ensure pulpit colliders have no friction to avoid edge-sticking when the player crosses
+        var pulpColliders = p.GetComponentsInChildren<Collider>();
+        foreach (var c in pulpColliders)
+        {
+            var mat = new PhysicsMaterial("Pulpit_NoFriction");
+            mat.dynamicFriction = 0f;
+            mat.staticFriction = 0f;
+            mat.frictionCombine = PhysicsMaterialCombine.Minimum;
+            mat.bounciness = 0f;
+            mat.bounceCombine = PhysicsMaterialCombine.Minimum;
+            c.material = mat;
+        }
         active.Add(p);
         lastPos = p.transform.position;
         float life = GetRandomLife();
@@ -252,6 +264,18 @@ public class PulpitSpawner : MonoBehaviour
                 Destroy(stray);
             }
             p.transform.localScale = new Vector3(9f, 1f, 9f);
+            // ensure pulpit colliders have no friction to avoid edge-sticking when the player crosses
+            var pulpColliders2 = p.GetComponentsInChildren<Collider>();
+            foreach (var c in pulpColliders2)
+            {
+                var mat = new PhysicsMaterial("Pulpit_NoFriction");
+                mat.dynamicFriction = 0f;
+                mat.staticFriction = 0f;
+                mat.frictionCombine = PhysicsMaterialCombine.Minimum;
+                mat.bounciness = 0f;
+                mat.bounceCombine = PhysicsMaterialCombine.Minimum;
+                c.material = mat;
+            }
             active.Add(p);
             lastPos = p.transform.position;
             float life = GetRandomLife();
